@@ -41,11 +41,9 @@ In Views
     Custom label
   <% end %>
 </th>
-
-If you want customize how arrows are generated copy views/sortable/_label.html.erb
-and change how you want.
-
 ```
+If you want customize how arrows are generated copy `views/sortable/_label.html.erb`
+and change how you want.
 
 ## Development
 

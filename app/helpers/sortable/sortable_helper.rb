@@ -10,7 +10,9 @@ module Sortable::SortableHelper
       new_direction = current_direction.to_s == "asc" ? "desc" : "asc"
     end
 
-    link_to(url_for(sort: column, direction: new_direction), options) do
+    url = url_for params.permit!.merge(sort: column, direction: new_direction)
+
+    link_to(url, options) do
       label = block_given? ? capture(&block) : column
       sortable_label_for(label, current, current_direction, scope)
     end

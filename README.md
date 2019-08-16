@@ -23,7 +23,7 @@ Or install it yourself as:
 
 ```
 class User < ApplicationRecord
-  include Sotable::Model
+  include Sortable::Model
 
   sortable :id, :updated_at, :email
   sortable :profile_name, -> { joins(:profile) }, column: "profiles.name"

@@ -12,28 +12,31 @@ module Sortable
         @sortable
       end
 
-      def sorting(column, direction = :asc)
-        Sortable::Sort.new(self, column, direction).all
+      def sorting(column, direction = :asc, args = [])
+        Sortable::Sort.new(self, column, direction, args).all
       end
     end
   end
 
   class Column
-    attr_reader :name, :column, :scope
-    def initialize(name, scope = nil, column: name)
+    attr_reader :name, :column, :scope, :virtual, :as_instance_method, :method_args
+    def initialize(name, scope = nil, column: name, virtual: false, as_instance_method: false)
       @name = name
       @column = column
       @scope = scope
+      @virtual = virtual
+      @as_instance_method = as_instance_method
     end
   end
 
   class Sort
     attr_reader :scope
 
-    def initialize(scope, column, direction)
+    def initialize(scope, column, direction, args = [])
       @scope = scope
       @column = column
       @direction = direction
+      @args = args
     end
 
     def columns
@@ -44,8 +47,17 @@ module Sortable
       all = scope.all
 
       if column
-        all = all.merge(column.scope) if column.scope.present?
-        all = all.order("#{column.column} #{direction}")
+        if column.scope.is_a?(Proc) && column.virtual && column.as_instance_method
+          all = all.sort_by { |e| column.scope.call(*[e, *args]) }
+        elsif column.scope.present?
+          all = all.merge(column.scope)
+        end
+
+        if column.virtual
+          all.reverse! if direction == "desc"
+        else
+          all = all.order("#{column.column} #{direction}")
+        end
       end
 
       all
@@ -65,5 +77,9 @@ module Sortable
         columns.map { |column| Column.new(*column) }
       end.group_by { |column| column.name.to_s }
     end
+
+    private
+
+    attr_reader :args
   end
 end

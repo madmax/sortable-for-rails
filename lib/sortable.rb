@@ -12,28 +12,30 @@ module Sortable
         @sortable
       end
 
-      def sorting(column, direction = :asc)
-        Sortable::Sort.new(self, column, direction).all
+      def sorting(column, direction = :asc, *args)
+        Sortable::Sort.new(self, column, direction, *args).all
       end
     end
   end
 
   class Column
-    attr_reader :name, :column, :scope
-    def initialize(name, scope = nil, column: name)
+    attr_reader :name, :column, :scope, :method
+    def initialize(name, scope = nil, column: name, method: nil)
       @name = name
-      @column = column
+      @column = [*column]
+      @method = method
       @scope = scope
     end
   end
 
   class Sort
-    attr_reader :scope
+    attr_reader :scope, :args
 
-    def initialize(scope, column, direction)
+    def initialize(scope, column, direction, *args)
       @scope = scope
       @column = column
       @direction = direction
+      @args = args
     end
 
     def columns
@@ -45,7 +47,12 @@ module Sortable
 
       if column
         all = all.merge(column.scope) if column.scope.present?
-        all = all.order("#{column.column} #{direction}")
+
+        if column.method
+          all = all.public_send(column.method, direction.to_sym, *args)
+        else
+          all = all.order("#{column.column} #{direction}")
+        end
       end
 
       all

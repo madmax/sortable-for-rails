@@ -22,7 +22,7 @@ module Sortable
     attr_reader :name, :column, :scope, :method
     def initialize(name, scope = nil, column: name, method: nil)
       @name = name
-      @column = [*column]
+      @column = column
       @method = method
       @scope = scope
     end

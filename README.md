@@ -27,6 +27,15 @@ class User < ApplicationRecord
 
   sortable :id, :updated_at, :email
   sortable :profile_name, -> { joins(:profile) }, column: "profiles.name"
+  sortable :status, method: :sortable_status
+
+  # we can sort in memory also if needed (for data not stored directly in DB)
+  # just remember on performance impact
+  def self.sortable_status(direction)
+    results = all.sort_by { |user| user.status }
+    results.reverse! if direction == :desc
+    results
+  end
 
 end
 ```

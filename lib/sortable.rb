@@ -50,6 +50,8 @@ module Sortable
 
         if column.method
           all = all.public_send(column.method, direction.to_sym, *args)
+        elsif column.column.is_a?(Symbol)
+          all = all.order(column.column => direction)
         else
           all = all.order("#{column.column} #{direction}")
         end

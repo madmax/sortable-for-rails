@@ -39,7 +39,7 @@ module Sortable
     end
 
     def columns
-      @columns = create_columns
+      @columns ||= create_columns
     end
 
     def all
@@ -71,8 +71,13 @@ module Sortable
     def create_columns
       scope.sortable.flat_map do |columns|
         columns = [columns] unless columns.all? { |column| column.is_a?(Symbol) }
-        columns.map { |column| Column.new(*column) }
+        columns.map { |column| create_column(column) }
       end.group_by { |column| column.name.to_s }
+    end
+
+    def create_column(column)
+      options = column.respond_to?(:last) && column.last.is_a?(Hash) ? column.pop : {}
+      Column.new(*column, **options)
     end
   end
 end

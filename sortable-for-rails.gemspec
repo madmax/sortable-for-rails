@@ -3,7 +3,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
 Gem::Specification.new do |spec|
   spec.name          = "sortable-for-rails"
-  spec.version       = "1.2.0"
+  spec.version       = "1.2.1"
   spec.authors       = ["Grzegorz Derebecki"]
   spec.email         = ["grzegorz.derebecki@fdb.pl"]
 
@@ -27,7 +27,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency "rails", ">= 5.2"
   spec.add_development_dependency "bundler", "~> 2.0"
-  spec.add_development_dependency "rake", "~> 10.0"
+  spec.add_development_dependency "rake", ">= 12.3.3"
   spec.add_development_dependency "minitest", "~> 5.0"
 
 end

@@ -76,8 +76,11 @@ module Sortable
     end
 
     def create_column(column)
-      options = column.respond_to?(:last) && column.last.is_a?(Hash) ? column.pop : {}
-      Column.new(*column, **options)
+      if column.respond_to?(:last) && column.last.is_a?(Hash)
+        Column.new(*column[0...-1], **column.last)
+      else
+        Column.new(*column)
+      end
     end
   end
 end
